@@ -7,9 +7,111 @@
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
+:root, [data-theme="midnight"] {
+  --bg:#1a1a2e; --bg-surface:#16213e; --bg-input:#0d1528; --bg-filter:#1a1a3e;
+  --bg-btn:#1e2a4a; --bg-btn-play:#1a2a3a; --border:#0f3460; --border-grid:#2a3a5a;
+  --border-section:#1e2a4a; --text:#e0e0e0; --text-dim:#a0a0c0; --text-muted:#8888aa;
+  --text-faint:#556; --text-btn:#8899bb; --accent:#e94560; --accent-bright:#f5a623;
+  --accent-dark:#6eb5ff; --accent-green:#50c878; --accent-purple:#bb86fc;
+  --scrollbar:#2a3a5a; --tooltip-bg:#16213ef0; --panel-bg:#16213ef0;
+  --resize-hover:#e9456044; --canvas-bg:#1a1a2e;
+  --bright-tint:rgba(245,166,35,0.04); --dark-tint:rgba(110,181,255,0.04);
+  --bright-label:rgba(245,166,35,0.35); --dark-label:rgba(110,181,255,0.35);
+  --grid-stroke:rgba(42,58,90,0.5); --axis-stroke:rgba(136,136,170,0.35);
+  --axis-label:rgba(136,136,170,0.5); --ref-stroke:rgba(187,134,252,0.2);
+  --ref-label:rgba(187,134,252,0.35); --region-label:rgba(160,160,192,0.25);
+  --bright-tick:rgba(245,166,35,0.7); --dark-tick:rgba(110,181,255,0.7);
+  --hue-shift:0; --sat-scale:1.0;
+}
+
+[data-theme="ember"] {
+  --bg:#1c1210; --bg-surface:#2a1a16; --bg-input:#150d0a; --bg-filter:#221412;
+  --bg-btn:#3a2218; --bg-btn-play:#2e1c14; --border:#4a2a1a; --border-grid:#5a3a28;
+  --border-section:#3a2218; --text:#f0ddd0; --text-dim:#c0a090; --text-muted:#aa8870;
+  --text-faint:#6a4a3a; --text-btn:#bb8866; --accent:#ff6b35; --accent-bright:#ffb347;
+  --accent-dark:#e8524a; --accent-green:#7dce82; --accent-purple:#d4845a;
+  --scrollbar:#5a3a28; --tooltip-bg:#2a1a16f0; --panel-bg:#2a1a16f0;
+  --resize-hover:#ff6b3544; --canvas-bg:#1c1210;
+  --bright-tint:rgba(255,179,71,0.05); --dark-tint:rgba(232,82,74,0.04);
+  --bright-label:rgba(255,179,71,0.35); --dark-label:rgba(232,82,74,0.35);
+  --grid-stroke:rgba(90,58,40,0.5); --axis-stroke:rgba(170,136,112,0.35);
+  --axis-label:rgba(170,136,112,0.5); --ref-stroke:rgba(212,132,90,0.25);
+  --ref-label:rgba(212,132,90,0.4); --region-label:rgba(192,160,140,0.25);
+  --bright-tick:rgba(255,179,71,0.7); --dark-tick:rgba(232,82,74,0.7);
+  --hue-shift:-20; --sat-scale:0.85;
+}
+
+[data-theme="ocean"] {
+  --bg:#0a1628; --bg-surface:#0e1e38; --bg-input:#061020; --bg-filter:#0c1a30;
+  --bg-btn:#142a4e; --bg-btn-play:#0e2240; --border:#1a3a6a; --border-grid:#244a7a;
+  --border-section:#1a3a6a; --text:#d0e4f0; --text-dim:#90b0cc; --text-muted:#6a90b0;
+  --text-faint:#3a5a7a; --text-btn:#6a9abb; --accent:#00bcd4; --accent-bright:#4dd0e1;
+  --accent-dark:#2979ff; --accent-green:#26a69a; --accent-purple:#7986cb;
+  --scrollbar:#244a7a; --tooltip-bg:#0e1e38f0; --panel-bg:#0e1e38f0;
+  --resize-hover:#00bcd444; --canvas-bg:#0a1628;
+  --bright-tint:rgba(77,208,225,0.04); --dark-tint:rgba(41,121,255,0.04);
+  --bright-label:rgba(77,208,225,0.35); --dark-label:rgba(41,121,255,0.35);
+  --grid-stroke:rgba(36,74,122,0.5); --axis-stroke:rgba(106,144,176,0.35);
+  --axis-label:rgba(106,144,176,0.5); --ref-stroke:rgba(121,134,203,0.25);
+  --ref-label:rgba(121,134,203,0.4); --region-label:rgba(106,144,176,0.25);
+  --bright-tick:rgba(77,208,225,0.7); --dark-tick:rgba(41,121,255,0.7);
+  --hue-shift:30; --sat-scale:1.1;
+}
+
+[data-theme="verdant"] {
+  --bg:#0e1a10; --bg-surface:#142816; --bg-input:#0a140c; --bg-filter:#121e14;
+  --bg-btn:#1e3a20; --bg-btn-play:#1a3018; --border:#1a4a20; --border-grid:#2a5a32;
+  --border-section:#1e3a20; --text:#d4e8d6; --text-dim:#98c09a; --text-muted:#6e9a70;
+  --text-faint:#3a5a3c; --text-btn:#70aa74; --accent:#66bb6a; --accent-bright:#aed581;
+  --accent-dark:#26a69a; --accent-green:#81c784; --accent-purple:#a5d6a7;
+  --scrollbar:#2a5a32; --tooltip-bg:#142816f0; --panel-bg:#142816f0;
+  --resize-hover:#66bb6a44; --canvas-bg:#0e1a10;
+  --bright-tint:rgba(174,213,129,0.05); --dark-tint:rgba(38,166,154,0.04);
+  --bright-label:rgba(174,213,129,0.35); --dark-label:rgba(38,166,154,0.35);
+  --grid-stroke:rgba(42,90,50,0.5); --axis-stroke:rgba(110,154,112,0.35);
+  --axis-label:rgba(110,154,112,0.5); --ref-stroke:rgba(165,214,167,0.2);
+  --ref-label:rgba(165,214,167,0.35); --region-label:rgba(110,154,112,0.25);
+  --bright-tick:rgba(174,213,129,0.7); --dark-tick:rgba(38,166,154,0.7);
+  --hue-shift:90; --sat-scale:0.9;
+}
+
+[data-theme="aubergine"] {
+  --bg:#1a1020; --bg-surface:#261830; --bg-input:#120a18; --bg-filter:#1e1428;
+  --bg-btn:#362044; --bg-btn-play:#2c1a3a; --border:#3a2060; --border-grid:#4a3070;
+  --border-section:#362044; --text:#e4d6f0; --text-dim:#b8a0cc; --text-muted:#8a70aa;
+  --text-faint:#5a3a6a; --text-btn:#a080bb; --accent:#ce93d8; --accent-bright:#f48fb1;
+  --accent-dark:#9575cd; --accent-green:#80cbc4; --accent-purple:#b39ddb;
+  --scrollbar:#4a3070; --tooltip-bg:#261830f0; --panel-bg:#261830f0;
+  --resize-hover:#ce93d844; --canvas-bg:#1a1020;
+  --bright-tint:rgba(244,143,177,0.05); --dark-tint:rgba(149,117,205,0.04);
+  --bright-label:rgba(244,143,177,0.35); --dark-label:rgba(149,117,205,0.35);
+  --grid-stroke:rgba(74,48,112,0.5); --axis-stroke:rgba(138,112,170,0.35);
+  --axis-label:rgba(138,112,170,0.5); --ref-stroke:rgba(179,157,219,0.25);
+  --ref-label:rgba(179,157,219,0.4); --region-label:rgba(138,112,170,0.25);
+  --bright-tick:rgba(244,143,177,0.7); --dark-tick:rgba(149,117,205,0.7);
+  --hue-shift:-60; --sat-scale:1.05;
+}
+
+[data-theme="monochrome"] {
+  --bg:#141414; --bg-surface:#1e1e1e; --bg-input:#0c0c0c; --bg-filter:#1a1a1a;
+  --bg-btn:#2a2a2a; --bg-btn-play:#222222; --border:#333333; --border-grid:#3a3a3a;
+  --border-section:#2a2a2a; --text:#e0e0e0; --text-dim:#a0a0a0; --text-muted:#808080;
+  --text-faint:#505050; --text-btn:#909090; --accent:#ffffff; --accent-bright:#d0d0d0;
+  --accent-dark:#909090; --accent-green:#b0b0b0; --accent-purple:#c0c0c0;
+  --scrollbar:#3a3a3a; --tooltip-bg:#1e1e1ef0; --panel-bg:#1e1e1ef0;
+  --resize-hover:#ffffff22; --canvas-bg:#141414;
+  --bright-tint:rgba(208,208,208,0.03); --dark-tint:rgba(144,144,144,0.03);
+  --bright-label:rgba(224,224,224,0.30); --dark-label:rgba(160,160,160,0.30);
+  --grid-stroke:rgba(58,58,58,0.5); --axis-stroke:rgba(128,128,128,0.35);
+  --axis-label:rgba(128,128,128,0.5); --ref-stroke:rgba(192,192,192,0.15);
+  --ref-label:rgba(192,192,192,0.3); --region-label:rgba(160,160,160,0.20);
+  --bright-tick:rgba(224,224,224,0.6); --dark-tick:rgba(160,160,160,0.6);
+  --hue-shift:0; --sat-scale:0.15;
+}
+
 body {
-  background: #1a1a2e;
-  color: #e0e0e0;
+  background: var(--bg);
+  color: var(--text);
   font-family: 'Segoe UI', system-ui, sans-serif;
   height: 100vh;
   display: flex;
@@ -19,8 +121,8 @@ body {
 
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #2a3a5a; border-radius: 3px; }
-* { scrollbar-width: thin; scrollbar-color: #2a3a5a transparent; }
+::-webkit-scrollbar-thumb { background: var(--scrollbar); border-radius: 3px; }
+* { scrollbar-width: thin; scrollbar-color: var(--scrollbar) transparent; }
 
 /* ── Top bar ── */
 #top-bar {
@@ -28,15 +130,15 @@ body {
   align-items: center;
   gap: 16px;
   padding: 8px 20px;
-  background: #16213e;
-  border-bottom: 1px solid #0f3460;
+  background: var(--bg-surface);
+  border-bottom: 1px solid var(--border);
   flex-shrink: 0;
   flex-wrap: wrap;
 }
 #top-bar .app-title {
   font-size: 15px;
   font-weight: 700;
-  color: #e94560;
+  color: var(--accent);
   white-space: nowrap;
 }
 .ctrl-group {
@@ -44,34 +146,65 @@ body {
   align-items: center;
   gap: 6px;
   font-size: 12px;
-  color: #a0a0c0;
+  color: var(--text-dim);
 }
 .ctrl-group label { cursor: default; white-space: nowrap; }
 .ctrl-group input[type="number"] {
   width: 52px;
-  background: #0d1528;
-  border: 1px solid #2a3a5a;
+  background: var(--bg-input);
+  border: 1px solid var(--border-grid);
   border-radius: 3px;
-  color: #e0e0e0;
+  color: var(--text);
   padding: 2px 4px;
   font-size: 11px;
   font-family: monospace;
   text-align: center;
 }
-.ctrl-group input[type="number"]:focus { border-color: #e94560; outline: none; }
+.ctrl-group input[type="number"]:focus { border-color: var(--accent); outline: none; }
 .ctrl-group input[type="number"]::-webkit-inner-spin-button,
 .ctrl-group input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; }
 .ctrl-group input[type="number"] { -moz-appearance: textfield; }
 .ctrl-group select {
-  background: #0d1528;
-  border: 1px solid #2a3a5a;
+  background: var(--bg-input);
+  border: 1px solid var(--border-grid);
   border-radius: 3px;
-  color: #e0e0e0;
+  color: var(--text);
   padding: 2px 4px;
   font-size: 11px;
   cursor: pointer;
 }
-.ctrl-group select:focus { border-color: #e94560; outline: none; }
+.ctrl-group select:focus { border-color: var(--accent); outline: none; }
+
+/* ── Theme picker ── */
+.theme-picker { position: relative; margin-left: auto; }
+.theme-btn {
+  display: flex; align-items: center; gap: 5px;
+  background: var(--bg-input); border: 1px solid var(--border-grid); border-radius: 4px;
+  color: var(--text-dim); padding: 3px 8px; font-size: 11px; cursor: pointer;
+  font-family: inherit; transition: border-color 0.15s, color 0.15s;
+}
+.theme-btn:hover { border-color: var(--accent); color: var(--text); }
+.theme-btn svg { width: 14px; height: 14px; }
+.theme-dropdown {
+  display: none; position: absolute; right: 0; top: calc(100% + 4px);
+  background: var(--bg-surface); border: 1px solid var(--border-grid); border-radius: 6px;
+  padding: 4px 0; z-index: 200; min-width: 160px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+}
+.theme-dropdown.open { display: block; }
+.theme-option {
+  display: flex; align-items: center; gap: 8px; padding: 6px 12px;
+  cursor: pointer; font-size: 12px; color: var(--text-dim); border: none;
+  background: none; width: 100%; text-align: left; font-family: inherit;
+  transition: background 0.1s;
+}
+.theme-option:hover { background: var(--bg-btn); color: var(--text); }
+.theme-option.active { color: var(--accent); font-weight: 600; }
+.theme-swatch {
+  width: 12px; height: 12px; border-radius: 50%;
+  border: 2px solid transparent; flex-shrink: 0;
+}
+.theme-option.active .theme-swatch { border-color: var(--accent); }
 
 /* ── Filter bar ── */
 #filter-bar {
@@ -79,8 +212,8 @@ body {
   align-items: center;
   gap: 10px;
   padding: 6px 20px;
-  background: #1a1a3e;
-  border-bottom: 1px solid #0f3460;
+  background: var(--bg-filter);
+  border-bottom: 1px solid var(--border);
   flex-shrink: 0;
   flex-wrap: wrap;
   font-size: 12px;
@@ -89,14 +222,14 @@ body {
   display: flex;
   align-items: center;
   gap: 4px;
-  color: #8888aa;
+  color: var(--text-muted);
 }
 .filter-group label { white-space: nowrap; }
 .filter-group select, .filter-group input[type="number"] {
-  background: #0d1528;
-  border: 1px solid #2a3a5a;
+  background: var(--bg-input);
+  border: 1px solid var(--border-grid);
   border-radius: 3px;
-  color: #e0e0e0;
+  color: var(--text);
   padding: 2px 4px;
   font-size: 11px;
 }
@@ -106,7 +239,7 @@ body {
   text-align: center;
 }
 .filter-group select { cursor: pointer; }
-.filter-group select:focus, .filter-group input:focus { border-color: #e94560; outline: none; }
+.filter-group select:focus, .filter-group input:focus { border-color: var(--accent); outline: none; }
 .filter-group input[type="number"]::-webkit-inner-spin-button,
 .filter-group input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; }
 .filter-group input[type="number"] { -moz-appearance: textfield; }
@@ -115,7 +248,7 @@ body {
   height: 4px;
   -webkit-appearance: none;
   appearance: none;
-  background: #2a3a5a;
+  background: var(--border-grid);
   border-radius: 2px;
   outline: none;
   cursor: pointer;
@@ -125,39 +258,39 @@ body {
   width: 12px;
   height: 12px;
   border-radius: 50%;
-  background: #6eb5ff;
-  border: 1px solid #0d1528;
+  background: var(--accent-dark);
+  border: 1px solid var(--bg-input);
   cursor: pointer;
 }
 .filter-group input[type="range"]::-moz-range-thumb {
   width: 12px;
   height: 12px;
   border-radius: 50%;
-  background: #6eb5ff;
-  border: 1px solid #0d1528;
+  background: var(--accent-dark);
+  border: 1px solid var(--bg-input);
   cursor: pointer;
 }
 .filter-group .range-val {
   font-family: monospace;
   font-size: 11px;
-  color: #e0e0e0;
+  color: var(--text);
   min-width: 24px;
   text-align: right;
 }
-.filter-sep { color: #2a3a5a; }
-#chord-count { color: #6eb5ff; font-weight: 600; margin-left: auto; }
+.filter-sep { color: var(--border-grid); }
+#chord-count { color: var(--accent-dark); font-weight: 600; margin-left: auto; }
 
 .filter-btn {
-  background: #1e2a4a;
-  border: 1px solid #2a3a5a;
+  background: var(--bg-btn);
+  border: 1px solid var(--border-grid);
   border-radius: 3px;
-  color: #8899bb;
+  color: var(--text-btn);
   font-size: 11px;
   padding: 2px 8px;
   cursor: pointer;
   font-family: inherit;
 }
-.filter-btn:hover { border-color: #4a6a9a; color: #dde; }
+.filter-btn:hover { border-color: var(--accent-dark); color: var(--text); }
 
 /* ── Canvas plot ── */
 #plot-container {
@@ -175,8 +308,8 @@ body {
 /* ── Tooltip ── */
 #tooltip {
   position: fixed;
-  background: #16213ef0;
-  border: 1px solid #e94560;
+  background: var(--tooltip-bg);
+  border: 1px solid var(--accent);
   border-radius: 6px;
   padding: 8px 12px;
   font-size: 12px;
@@ -186,24 +319,25 @@ body {
   max-width: 280px;
   line-height: 1.6;
 }
-#tooltip .tt-ratio { font-weight: 700; color: #e94560; font-size: 14px; }
-#tooltip .tt-name { color: #e0e0e0; }
-#tooltip .tt-detail { color: #a0a0c0; }
+#tooltip .tt-ratio { font-weight: 700; color: var(--accent); font-size: 14px; }
+#tooltip .tt-name { color: var(--text); }
+#tooltip .tt-detail { color: var(--text-dim); }
 #tooltip .tt-detail span { font-family: monospace; }
-.tt-bright { color: #f5a623; }
-.tt-neutral { color: #8888aa; }
-.tt-dark { color: #6eb5ff; }
+.tt-bright { color: var(--accent-bright); }
+.tt-neutral { color: var(--text-muted); }
+.tt-dark { color: var(--accent-dark); }
 
 /* ── Bottom info panel ── */
 #info-panel {
   flex-shrink: 0;
   height: 0;
-  background: #16213ef0;
-  border-top: 1px solid #0f3460;
+  background: var(--panel-bg);
+  border-top: 1px solid var(--border);
   overflow: hidden;
   transition: height 0.2s ease;
   display: flex;
   flex-direction: column;
+  position: relative;
 }
 #info-panel.open {
   height: 240px;
@@ -217,7 +351,7 @@ body {
 }
 #info-panel .panel-resize:hover,
 #info-panel .panel-resize:active {
-  background: #e9456044;
+  background: var(--resize-hover);
 }
 
 #info-panel .panel-inner {
@@ -252,23 +386,23 @@ body {
 .panel-ratio {
   font-size: 20px;
   font-weight: 700;
-  color: #e94560;
+  color: var(--accent);
   font-family: monospace;
   word-break: break-all;
 }
 .panel-name {
   font-size: 14px;
-  color: #e0e0e0;
+  color: var(--text);
   font-weight: 600;
   min-height: 1.4em;
 }
 .panel-generic {
   font-size: 11px;
-  color: #8888aa;
+  color: var(--text-muted);
   font-style: italic;
 }
 .panel-wiki a {
-  color: #6eb5ff;
+  color: var(--accent-dark);
   text-decoration: none;
   font-size: 11px;
 }
@@ -281,10 +415,10 @@ body {
   margin-top: 4px;
 }
 .panel-audio select, .panel-audio input[type="number"] {
-  background: #0d1528;
-  border: 1px solid #2a3a5a;
+  background: var(--bg-input);
+  border: 1px solid var(--border-grid);
   border-radius: 3px;
-  color: #e0e0e0;
+  color: var(--text);
   padding: 2px 4px;
   font-size: 11px;
 }
@@ -293,29 +427,29 @@ body {
 .panel-audio input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; }
 .panel-audio input[type="number"] { -moz-appearance: textfield; }
 .panel-audio select { cursor: pointer; }
-.panel-audio label { font-size: 10px; color: #8888aa; }
+.panel-audio label { font-size: 10px; color: var(--text-muted); }
 .panel-play-btn {
-  background: #1a2a3a;
-  border: 1px solid #2a3a5a;
+  background: var(--bg-btn-play);
+  border: 1px solid var(--border-grid);
   border-radius: 4px;
-  color: #50c878;
+  color: var(--accent-green);
   font-size: 12px;
   padding: 3px 8px;
   cursor: pointer;
   font-family: inherit;
 }
-.panel-play-btn:hover { background: #2a3a5a; border-color: #50c878; }
+.panel-play-btn:hover { background: var(--border-grid); border-color: var(--accent-green); }
 .panel-stop-btn {
-  background: #1a2a3a;
-  border: 1px solid #2a3a5a;
+  background: var(--bg-btn-play);
+  border: 1px solid var(--border-grid);
   border-radius: 4px;
-  color: #e94560;
+  color: var(--accent);
   font-size: 12px;
   padding: 3px 8px;
   cursor: pointer;
   font-family: inherit;
 }
-.panel-stop-btn:hover { border-color: #e94560; }
+.panel-stop-btn:hover { border-color: var(--accent); }
 
 .panel-desc-col {
   flex-shrink: 0;
@@ -341,11 +475,11 @@ body {
 }
 .panel-section-title {
   font-size: 11px;
-  color: #556;
+  color: var(--text-faint);
   text-transform: uppercase;
   letter-spacing: 0.8px;
   padding: 0 0 3px 0;
-  border-bottom: 1px solid #1e2a4a;
+  border-bottom: 1px solid var(--border-section);
   margin-bottom: 2px;
 }
 .panel-row {
@@ -357,13 +491,13 @@ body {
 }
 .panel-row-label {
   font-size: 12px;
-  color: #8888aa;
+  color: var(--text-muted);
   white-space: nowrap;
 }
 .panel-row-value {
   font-size: 14px;
   font-family: monospace;
-  color: #e0e0e0;
+  color: var(--text);
   font-weight: 600;
   text-align: right;
   white-space: nowrap;
@@ -377,7 +511,7 @@ body {
 .panel-edo-title {
   font-size: 12px;
   font-weight: 700;
-  color: #6eb5ff;
+  color: var(--accent-dark);
   margin-bottom: 4px;
 }
 .panel-edo-table {
@@ -387,11 +521,11 @@ body {
 }
 .panel-edo-table th {
   padding: 3px 6px;
-  background: #0d1528;
-  color: #a0a0c0;
+  background: var(--bg-input);
+  color: var(--text-dim);
   font-weight: 600;
   text-align: right;
-  border-bottom: 1px solid #2a3a5a;
+  border-bottom: 1px solid var(--border-grid);
   font-size: 10px;
   cursor: pointer;
   user-select: none;
@@ -404,10 +538,10 @@ body {
 .panel-edo-table th:nth-child(2) { text-align: left; }
 .panel-edo-table th.sort-asc::after { content: ' ▲'; font-size: 8px; }
 .panel-edo-table th.sort-desc::after { content: ' ▼'; font-size: 8px; }
-.panel-edo-table th:hover { color: #e0e0ff; }
+.panel-edo-table th:hover { color: var(--text); }
 .panel-edo-table td {
   padding: 2px 6px;
-  border-bottom: 1px solid #1a2a3a;
+  border-bottom: 1px solid var(--border-section);
   font-family: monospace;
   text-align: right;
   white-space: nowrap;
@@ -415,37 +549,37 @@ body {
 .panel-edo-table td:first-child { text-align: center; }
 .panel-edo-table td:nth-child(2) { text-align: left; }
 .panel-edo-table .edo-play-btn {
-  background: #1a2a3a;
-  border: 1px solid #2a3a5a;
+  background: var(--bg-btn-play);
+  border: 1px solid var(--border-grid);
   border-radius: 3px;
-  color: #50c878;
+  color: var(--accent-green);
   font-size: 11px;
   width: 22px;
   height: 18px;
   cursor: pointer;
   padding: 0;
 }
-.panel-edo-table .edo-play-btn:hover { background: #2a3a5a; border-color: #50c878; }
+.panel-edo-table .edo-play-btn:hover { background: var(--border-grid); border-color: var(--accent-green); }
 
 .panel-close {
   position: absolute;
   top: 8px;
   right: 12px;
   cursor: pointer;
-  color: #888;
+  color: var(--text-muted);
   font-size: 16px;
   background: none;
   border: none;
   z-index: 10;
 }
-.panel-close:hover { color: #e94560; }
+.panel-close:hover { color: var(--accent); }
 
 #status-bar {
   padding: 4px 20px;
-  background: #16213e;
-  border-top: 1px solid #0f3460;
+  background: var(--bg-surface);
+  border-top: 1px solid var(--border);
   font-size: 11px;
-  color: #556;
+  color: var(--text-faint);
   flex-shrink: 0;
   display: flex;
   gap: 16px;
@@ -470,9 +604,9 @@ body {
   <div class="ctrl-group">
     <label>Frame:</label>
     <input type="number" id="cfg-frame-min" value="0" min="0" max="1200" step="10">
-    <span style="color:#556">–</span>
+    <span style="color:var(--text-faint)">–</span>
     <input type="number" id="cfg-frame-max" value="1199" min="0" max="1200" step="10">
-    <span style="color:#8888aa">¢</span>
+    <span style="color:var(--text-muted)">¢</span>
   </div>
   <div class="ctrl-group">
     <label>Mode:</label>
@@ -481,7 +615,23 @@ body {
       <option value="thirds">Stack of thirds</option>
     </select>
   </div>
-  <button class="filter-btn" id="btn-regenerate" style="color:#50c878;border-color:#50c878">Generate</button>
+  <button class="filter-btn" id="btn-regenerate" style="color:var(--accent-green);border-color:var(--accent-green)">Generate</button>
+  <div class="theme-picker">
+    <button class="theme-btn" id="theme-toggle">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+      </svg>
+      <span>Theme</span>
+    </button>
+    <div class="theme-dropdown" id="theme-dropdown">
+      <button class="theme-option active" data-theme="midnight"><span class="theme-swatch" style="background:#e94560"></span>Midnight</button>
+      <button class="theme-option" data-theme="ember"><span class="theme-swatch" style="background:#ff6b35"></span>Ember</button>
+      <button class="theme-option" data-theme="ocean"><span class="theme-swatch" style="background:#00bcd4"></span>Ocean</button>
+      <button class="theme-option" data-theme="verdant"><span class="theme-swatch" style="background:#66bb6a"></span>Verdant</button>
+      <button class="theme-option" data-theme="aubergine"><span class="theme-swatch" style="background:#ce93d8"></span>Aubergine</button>
+      <button class="theme-option" data-theme="monochrome"><span class="theme-swatch" style="background:#808080"></span>Monochrome</button>
+    </div>
+  </div>
 </div>
 
 <div id="filter-bar">
@@ -511,29 +661,29 @@ body {
   <div class="filter-group">
     <label>Search:</label>
     <input type="text" id="flt-search" placeholder="16, :21, 5:" title="Comma-separated OR. 16=any, 16:=root, :16:=mid, :16=top" style="
-      width:120px;background:#0d1528;border:1px solid #2a3a5a;border-radius:3px;
-      color:#e0e0e0;padding:2px 6px;font-size:11px;font-family:inherit;
+      width:120px;background:var(--bg-input);border:1px solid var(--border-grid);border-radius:3px;
+      color:var(--text);padding:2px 6px;font-size:11px;font-family:inherit;
     ">
   </div>
   <div class="filter-group">
     <label>EDO overlay:</label>
     <input type="text" id="flt-edo-overlay" placeholder="12,19,31" title="Comma-separated EDOs" style="
-      width:80px;background:#0d1528;border:1px solid #2a3a5a;border-radius:3px;
-      color:#50c878;padding:2px 4px;font-size:11px;font-family:monospace;
+      width:80px;background:var(--bg-input);border:1px solid var(--border-grid);border-radius:3px;
+      color:var(--accent-green);padding:2px 4px;font-size:11px;font-family:monospace;
     ">
   </div>
   <div class="filter-group">
     <label>EDO ≤</label>
     <input type="number" id="flt-edo-upto" min="2" max="72" placeholder="–" title="Show all EDOs up to N" style="
-      width:42px;background:#0d1528;border:1px solid #2a3a5a;border-radius:3px;
-      color:#50c878;padding:2px 4px;font-size:11px;font-family:monospace;
+      width:42px;background:var(--bg-input);border:1px solid var(--border-grid);border-radius:3px;
+      color:var(--accent-green);padding:2px 4px;font-size:11px;font-family:monospace;
     ">
   </div>
   <div class="filter-group">
     <label>Steps:</label>
     <input type="text" id="flt-steps" placeholder="5/4, 6/5, 9/7" title="Only show chords whose steps are all in this list" style="
-      width:320px;background:#0d1528;border:1px solid #2a3a5a;border-radius:3px;
-      color:#e0e0e0;padding:2px 6px;font-size:11px;font-family:monospace;
+      width:320px;background:var(--bg-input);border:1px solid var(--border-grid);border-radius:3px;
+      color:var(--text);padding:2px 6px;font-size:11px;font-family:monospace;
     ">
     <button class="filter-btn" id="btn-tertian" title="Fill with tertian third intervals">tertian triads</button>
   </div>
@@ -558,6 +708,66 @@ body {
 
 <script>
 'use strict';
+
+// ═══════════════════════════════════════════
+// THEME SYSTEM
+// ═══════════════════════════════════════════
+
+let _themeCache = null;
+
+function getThemeColors() {
+  if (_themeCache) return _themeCache;
+  const s = getComputedStyle(document.documentElement);
+  const g = v => s.getPropertyValue(v).trim();
+  _themeCache = {
+    canvasBg: g('--canvas-bg'),
+    brightTint: g('--bright-tint'),
+    darkTint: g('--dark-tint'),
+    brightLabel: g('--bright-label'),
+    darkLabel: g('--dark-label'),
+    gridStroke: g('--grid-stroke'),
+    axisStroke: g('--axis-stroke'),
+    axisLabel: g('--axis-label'),
+    refStroke: g('--ref-stroke'),
+    refLabel: g('--ref-label'),
+    regionLabel: g('--region-label'),
+    brightTick: g('--bright-tick'),
+    darkTick: g('--dark-tick'),
+    text: g('--text'),
+    textDim: g('--text-dim'),
+    textMuted: g('--text-muted'),
+    textFaint: g('--text-faint'),
+    border: g('--border'),
+    accent: g('--accent'),
+    accentBright: g('--accent-bright'),
+    accentDark: g('--accent-dark'),
+    accentGreen: g('--accent-green'),
+    accentPurple: g('--accent-purple'),
+    bgInput: g('--bg-input'),
+    borderGrid: g('--border-grid'),
+    hueShift: parseFloat(g('--hue-shift')) || 0,
+    satScale: parseFloat(g('--sat-scale')) || 1,
+  };
+  return _themeCache;
+}
+
+function setTheme(name) {
+  document.documentElement.setAttribute('data-theme', name);
+  _themeCache = null;
+  _auraCache.clear();
+
+  document.querySelectorAll('.theme-option').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.theme === name);
+  });
+  try { localStorage.setItem('ji-chord-theme', name); } catch(e) {}
+  scheduleRedraw(false);
+}
+
+(function initTheme() {
+  let saved;
+  try { saved = localStorage.getItem('ji-chord-theme'); } catch(e) {}
+  if (saved) document.documentElement.setAttribute('data-theme', saved);
+})();
 
 // ═══════════════════════════════════════════
 // CONSTANTS & CONFIG
@@ -810,11 +1020,10 @@ const CURATED_THIRDS = [
 const EDO_RANGE = { min: 5, max: 72 };
 const EDO_MAX_RMS_REL = 15;
 
-const CONTOUR_COLORS = {
-  bright: '#f5a623',
-  neutral: '#8888aa',
-  dark: '#6eb5ff',
-};
+function getContourColors() {
+  const tc = getThemeColors();
+  return { bright: tc.accentBright, neutral: tc.textMuted, dark: tc.accentDark };
+}
 
 const REGION_BAND_COLORS = [
   'rgba(80, 60, 107, 0.12)',
@@ -1523,9 +1732,9 @@ window.addEventListener('mousemove', (e) => {
 
     const tooltip = document.getElementById('tooltip');
     tooltip.innerHTML = `
-      <div class="tt-detail">root <span style="color:#50c878">${rootHz.toFixed(1)} Hz</span></div>
+      <div class="tt-detail">root <span style="color:var(--accent-green)">${rootHz.toFixed(1)} Hz</span></div>
       <div class="tt-detail">lower <span>${lower.toFixed(1)}¢</span> · upper <span>${upper.toFixed(1)}¢</span></div>
-      <div class="tt-detail">frame <span style="color:#f5a623">${F.toFixed(1)}¢</span> · hardness <span style="color:#bb86fc">${H.toFixed(3)}</span></div>
+      <div class="tt-detail">frame <span style="color:var(--accent-bright)">${F.toFixed(1)}¢</span> · hardness <span style="color:var(--accent-purple)">${H.toFixed(3)}</span></div>
     `;
     tooltip.style.display = 'block';
     let tx = e.clientX + 14, ty = e.clientY - 10;
@@ -1592,8 +1801,9 @@ document.getElementById('btn-reset-view').addEventListener('click', () => {
 function drawPlot(shouldResize) {
   if (shouldResize !== false) resizeCanvas();
   const ctx = plotCtx;
+  const tc = getThemeColors();
   ctx.clearRect(0, 0, W, H);
-  ctx.fillStyle = '#1a1a2e';
+  ctx.fillStyle = tc.canvasBg;
   ctx.fillRect(0, 0, W, H);
 
   const pL = PADDING.left * dpr, pR = PADDING.right * dpr;
@@ -1606,15 +1816,15 @@ function drawPlot(shouldResize) {
   const yTop = Math.max(pT, Math.min(H - pB, yCenter));
   const yBot = Math.max(pT, Math.min(H - pB, yCenter));
   if (yCenter > pT && yCenter < H - pB) {
-    ctx.fillStyle = 'rgba(245, 166, 35, 0.04)';
+    ctx.fillStyle = tc.brightTint;
     ctx.fillRect(pL, pT, plotW, yCenter - pT);
-    ctx.fillStyle = 'rgba(110, 181, 255, 0.04)';
+    ctx.fillStyle = tc.darkTint;
     ctx.fillRect(pL, yCenter, plotW, H - pB - yCenter);
   } else if (yCenter <= pT) {
-    ctx.fillStyle = 'rgba(110, 181, 255, 0.04)';
+    ctx.fillStyle = tc.darkTint;
     ctx.fillRect(pL, pT, plotW, plotH);
   } else {
-    ctx.fillStyle = 'rgba(245, 166, 35, 0.04)';
+    ctx.fillStyle = tc.brightTint;
     ctx.fillRect(pL, pT, plotW, plotH);
   }
 
@@ -1630,7 +1840,7 @@ function drawPlot(shouldResize) {
 
     ctx.save();
     ctx.font = `${11 * dpr}px 'Segoe UI', system-ui, sans-serif`;
-    ctx.fillStyle = 'rgba(160,160,192,0.25)';
+    ctx.fillStyle = tc.regionLabel;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'top';
     ctx.fillText(FRAME_REGIONS.names[i], (x0 + x1) / 2, pT + 4 * dpr);
@@ -1640,7 +1850,7 @@ function drawPlot(shouldResize) {
   // Center axis (signedH = 0)
   if (viewSignedMin <= 0 && viewSignedMax >= 0) {
     const y0 = plotY(0);
-    ctx.strokeStyle = 'rgba(136,136,170,0.35)';
+    ctx.strokeStyle = tc.axisStroke;
     ctx.lineWidth = 1.5 * dpr;
     ctx.beginPath();
     ctx.moveTo(pL, y0);
@@ -1648,7 +1858,7 @@ function drawPlot(shouldResize) {
     ctx.stroke();
 
     ctx.font = `${10 * dpr}px 'Segoe UI', system-ui, sans-serif`;
-    ctx.fillStyle = 'rgba(136,136,170,0.5)';
+    ctx.fillStyle = tc.axisLabel;
     ctx.textAlign = 'left';
     ctx.textBaseline = 'bottom';
     ctx.fillText('H = 1.0 (equal thirds)', pL + 4 * dpr, y0 - 3 * dpr);
@@ -1658,7 +1868,7 @@ function drawPlot(shouldResize) {
   for (const sH of [1.5, -1.5]) {
     if (viewSignedMin <= sH && viewSignedMax >= sH) {
       const y = plotY(sH);
-      ctx.strokeStyle = 'rgba(187,134,252,0.2)';
+      ctx.strokeStyle = tc.refStroke;
       ctx.lineWidth = 1 * dpr;
       ctx.setLineDash([6 * dpr, 4 * dpr]);
       ctx.beginPath();
@@ -1668,7 +1878,7 @@ function drawPlot(shouldResize) {
       ctx.setLineDash([]);
 
       ctx.font = `${9 * dpr}px 'Segoe UI', system-ui, sans-serif`;
-      ctx.fillStyle = 'rgba(187,134,252,0.35)';
+      ctx.fillStyle = tc.refLabel;
       ctx.textAlign = 'right';
       ctx.textBaseline = sH > 0 ? 'bottom' : 'top';
       ctx.fillText('H = 2.5', W - pR - 4 * dpr, y + (sH > 0 ? -2 : 2) * dpr);
@@ -1681,19 +1891,19 @@ function drawPlot(shouldResize) {
   ctx.font = `bold ${11 * dpr}px 'Segoe UI', system-ui, sans-serif`;
   ctx.textAlign = 'center';
   if (yCenterClamped - pT > 30 * dpr) {
-    ctx.fillStyle = 'rgba(245, 166, 35, 0.35)';
+    ctx.fillStyle = tc.brightLabel;
     ctx.textBaseline = 'top';
     ctx.fillText('bright ↑', pL + 30 * dpr, pT + 4 * dpr);
   }
   if (H - pB - yCenterClamped > 30 * dpr) {
-    ctx.fillStyle = 'rgba(110, 181, 255, 0.35)';
+    ctx.fillStyle = tc.darkLabel;
     ctx.textBaseline = 'bottom';
     ctx.fillText('dark ↓', pL + 24 * dpr, H - pB - 4 * dpr);
   }
   ctx.restore();
 
   // Grid
-  ctx.strokeStyle = 'rgba(42,58,90,0.5)';
+  ctx.strokeStyle = tc.gridStroke;
   ctx.lineWidth = dpr * 0.5;
 
   const xTicks = niceTicksLinear(viewFrameMin, viewFrameMax, 16);
@@ -1713,7 +1923,7 @@ function drawPlot(shouldResize) {
 
   // X tick labels
   ctx.font = `${11 * dpr}px monospace`;
-  ctx.fillStyle = '#8888aa';
+  ctx.fillStyle = tc.textMuted;
   ctx.textAlign = 'center';
   ctx.textBaseline = 'top';
   for (const v of xTicks) {
@@ -1728,13 +1938,13 @@ function drawPlot(shouldResize) {
   for (const v of yTicksAll) {
     const y = plotY(v);
     if (y < pT || y > H - pB || Math.abs(v) < 0.001) continue;
-    ctx.fillStyle = v > 0 ? 'rgba(245,166,35,0.7)' : 'rgba(110,181,255,0.7)';
+    ctx.fillStyle = v > 0 ? tc.brightTick : tc.darkTick;
     ctx.fillText((Math.abs(v) + 1).toFixed(2), pL - 6 * dpr, y);
   }
 
   // Axis titles
   ctx.font = `${12 * dpr}px 'Segoe UI', system-ui, sans-serif`;
-  ctx.fillStyle = '#a0a0c0';
+  ctx.fillStyle = tc.textDim;
   ctx.textAlign = 'center';
   ctx.textBaseline = 'top';
   ctx.fillText('Frame (¢)', pL + plotW / 2, H - 14 * dpr);
@@ -1747,7 +1957,7 @@ function drawPlot(shouldResize) {
   ctx.restore();
 
   // Plot border
-  ctx.strokeStyle = '#0f3460';
+  ctx.strokeStyle = tc.border;
   ctx.lineWidth = dpr;
   ctx.strokeRect(pL, pT, plotW, plotH);
 
@@ -1840,12 +2050,16 @@ function drawPlot(shouldResize) {
   const skipRings = nodeCount > 600;
 
   // Pass 1: auras (skip when too many nodes — they just blend into mush)
+  const auraHueShift = tc.hueShift;
+  const auraSatScale = tc.satScale;
   if (!skipAuras) {
     for (const n of visNodes) {
       const c = n.c;
       const alpha = n.vis * 0.9;
       const auraAlpha = alpha * Math.min(0.6, 5 / c.ol);
-      const sprite = getAuraSprite(c.ch | 0, c.cs | 0, c.cl | 0);
+      const ah = ((c.ch + auraHueShift) % 360 + 360) % 360;
+      const as = Math.max(0, Math.min(100, c.cs * auraSatScale));
+      const sprite = getAuraSprite(ah | 0, as | 0, c.cl | 0);
       const size = n.auraR * 2;
       ctx.globalAlpha = auraAlpha;
       ctx.drawImage(sprite, n.x - n.auraR, n.y - n.auraR, size, size);
@@ -1857,7 +2071,9 @@ function drawPlot(shouldResize) {
       const c = n.c;
       const alpha = n.vis * 0.9;
       const auraAlpha = alpha * Math.min(0.6, 5 / c.ol);
-      const sprite = getAuraSprite(c.ch | 0, c.cs | 0, c.cl | 0);
+      const ah = ((c.ch + auraHueShift) % 360 + 360) % 360;
+      const as = Math.max(0, Math.min(100, c.cs * auraSatScale));
+      const sprite = getAuraSprite(ah | 0, as | 0, c.cl | 0);
       const size = n.auraR * 2;
       ctx.globalAlpha = auraAlpha;
       ctx.drawImage(sprite, n.x - n.auraR, n.y - n.auraR, size, size);
@@ -1868,9 +2084,13 @@ function drawPlot(shouldResize) {
   // Pass 2: dots, rings, labels
   const TWO_PI = Math.PI * 2;
   const ringWidth = 0.75 * dpr;
+  const hueShift = tc.hueShift;
+  const satScale = tc.satScale;
   let lastFill = '', lastStroke = '';
   for (const n of visNodes) {
-    const h = n.c.ch, s = n.c.cs, l = n.c.cl;
+    const h = (n.c.ch + hueShift + 360) % 360;
+    const s = Math.max(0, Math.min(100, n.c.cs * satScale));
+    const l = n.c.cl;
     const isHovered = n.i === hoveredIdx;
     const alpha = n.vis * 0.9;
 
@@ -1899,21 +2119,21 @@ function drawPlot(shouldResize) {
     if (n.isSelected) {
       ctx.beginPath();
       ctx.arc(n.x, n.y, dotR + 4 * dpr, 0, TWO_PI);
-      ctx.strokeStyle = '#e94560';
+      ctx.strokeStyle = tc.accent;
       ctx.lineWidth = 1.5 * dpr;
       ctx.stroke();
       lastStroke = '';
     } else if (n.isStacked) {
       ctx.beginPath();
       ctx.arc(n.x, n.y, dotR + 4 * dpr, 0, TWO_PI);
-      ctx.strokeStyle = '#50c878';
+      ctx.strokeStyle = tc.accentGreen;
       ctx.lineWidth = 1.5 * dpr;
       ctx.stroke();
       lastStroke = '';
     } else if (n.isInversion) {
       ctx.beginPath();
       ctx.arc(n.x, n.y, dotR + 4 * dpr, 0, TWO_PI);
-      ctx.strokeStyle = '#e9456088';
+      ctx.strokeStyle = tc.accent + '88';
       ctx.lineWidth = 1.5 * dpr;
       ctx.setLineDash([3 * dpr, 3 * dpr]);
       ctx.stroke();
@@ -1930,7 +2150,7 @@ function drawPlot(shouldResize) {
 
     if (isHovered || n.isSelected || n.isInversion || n.isStacked) {
       ctx.font = `bold ${11 * dpr}px monospace`;
-      ctx.fillStyle = '#e0e0e0';
+      ctx.fillStyle = tc.text;
       ctx.textAlign = 'left';
       ctx.textBaseline = 'bottom';
       ctx.fillText(n.c.key, n.x + dotR + 4 * dpr, n.y - 2 * dpr);
@@ -1949,12 +2169,12 @@ function drawPlot(shouldResize) {
       const y = plotY(t.signedH);
       if (x < pL - 10 * dpr || x > W - pR + 10 * dpr || y < pT - 6 * dpr || y > H - pB + 6 * dpr) continue;
       const isHov = i === hoveredEdoTriad;
-      ctx.fillStyle = isHov ? '#ffffff' : 'rgba(80,200,120,0.7)';
+      ctx.fillStyle = isHov ? '#ffffff' : hexWithAlpha(tc.accentGreen, 0.7);
       ctx.fillText(t.edo, x, y);
 
       if (isHov) {
         ctx.font = `bold ${11 * dpr}px monospace`;
-        ctx.fillStyle = '#50c878';
+        ctx.fillStyle = tc.accentGreen;
         ctx.textAlign = 'left';
         ctx.textBaseline = 'bottom';
         ctx.fillText(t.label, x + 10 * dpr, y - 2 * dpr);
@@ -2087,13 +2307,13 @@ canvas.addEventListener('mousemove', (e) => {
     const c = filteredChords[idx];
     canvas.style.cursor = 'pointer';
     const inStack = stackedChordKeys.has(c.key);
-    const stackHint = chordStack.length > 0 ? (inStack ? '<div class="tt-detail" style="color:#50c878">in stack</div>' : '<div class="tt-detail" style="color:#50c878">shift+click to stack</div>') : '<div class="tt-detail" style="color:#555">shift+click to start stacking</div>';
+    const stackHint = chordStack.length > 0 ? (inStack ? '<div class="tt-detail" style="color:var(--accent-green)">in stack</div>' : '<div class="tt-detail" style="color:var(--accent-green)">shift+click to stack</div>') : '<div class="tt-detail" style="color:var(--text-faint)">shift+click to start stacking</div>';
     tooltip.innerHTML = `
       <div class="tt-ratio">${c.key}</div>${c.displayName ? `
       <div class="tt-name">${c.displayName}</div>` : ''}
       <div class="tt-detail">lower <span>${c.a.toFixed(1)}¢</span> · upper <span>${c.b.toFixed(1)}¢</span></div>
-      <div class="tt-detail">frame <span style="color:#f5a623">${c.F.toFixed(1)}¢</span> · hardness <span style="color:#bb86fc">${c.H.toFixed(3)}</span></div>
-      <div class="tt-detail">odd-limit <span style="color:#50c878">${c.ol}</span></div>
+      <div class="tt-detail">frame <span style="color:var(--accent-bright)">${c.F.toFixed(1)}¢</span> · hardness <span style="color:var(--accent-purple)">${c.H.toFixed(3)}</span></div>
+      <div class="tt-detail">odd-limit <span style="color:var(--accent-green)">${c.ol}</span></div>
       ${stackHint}
     `;
     tooltip.style.display = 'block';
@@ -2101,10 +2321,10 @@ canvas.addEventListener('mousemove', (e) => {
     const t = edoOverlayTriads[edoIdx];
     canvas.style.cursor = 'pointer';
     tooltip.innerHTML = `
-      <div class="tt-ratio" style="color:#50c878">${t.label}</div>
-      <div class="tt-detail">steps <span style="color:#50c878">${t.steps.join('–')}</span></div>
+      <div class="tt-ratio" style="color:var(--accent-green)">${t.label}</div>
+      <div class="tt-detail">steps <span style="color:var(--accent-green)">${t.steps.join('–')}</span></div>
       <div class="tt-detail">lower <span>${t.a.toFixed(1)}¢</span> · upper <span>${t.b.toFixed(1)}¢</span></div>
-      <div class="tt-detail">frame <span style="color:#f5a623">${t.F.toFixed(1)}¢</span> · hardness <span style="color:#bb86fc">${t.H.toFixed(3)}</span></div>
+      <div class="tt-detail">frame <span style="color:var(--accent-bright)">${t.F.toFixed(1)}¢</span> · hardness <span style="color:var(--accent-purple)">${t.H.toFixed(3)}</span></div>
     `;
     tooltip.style.display = 'block';
   } else {
@@ -2286,19 +2506,19 @@ function showStackPanel(merged) {
   }).join('');
 
   const intervalRows = intervals.map((iv, i) => {
-    const colors = ['#6eb5ff', '#f5a623', '#50c878', '#bb86fc', '#e94560', '#ff6b9d', '#ffd700'];
+    const colors = ['var(--accent-dark)', 'var(--accent-bright)', 'var(--accent-green)', 'var(--accent-purple)', 'var(--accent)', 'var(--text-dim)', 'var(--text)'];
     const color = colors[i % colors.length];
     return `<div class="panel-row">
       <span class="panel-row-label" style="color:${color}">Step ${i + 1}</span>
       <span class="panel-row-value" style="color:${color}">${iv.ratio}</span>
-      <span class="panel-row-value" style="color:#e94560">${iv.cents.toFixed(1)}¢</span>
+      <span class="panel-row-value" style="color:var(--accent)">${iv.cents.toFixed(1)}¢</span>
     </div>`;
   }).join('');
 
   inner.innerHTML = `
     <div class="panel-header-col">
       <div class="panel-ratio">${merged.key}</div>
-      <div class="panel-name" style="color:#50c878;font-size:11px">${sourceKeys}</div>
+      <div class="panel-name" style="color:var(--accent-green);font-size:11px">${sourceKeys}</div>
       <div class="panel-audio">
         <label>Hz</label>
         <input type="number" id="p-root" value="${synthRootHz}" min="20" max="2000">
@@ -2323,14 +2543,14 @@ function showStackPanel(merged) {
           ${intervalRows}
           <div class="panel-row" style="margin-top:4px">
             <span class="panel-row-label">Span</span>
-            <span class="panel-row-value" style="color:#bb86fc">${totalSpan.toFixed(1)}¢</span>
+            <span class="panel-row-value" style="color:var(--accent-purple)">${totalSpan.toFixed(1)}¢</span>
           </div>
         </div>
         <div class="panel-section">
           <div class="panel-section-title">Properties</div>
           <div class="panel-row">
             <span class="panel-row-label">Odd limit</span>
-            <span class="panel-row-value" style="color:#50c878">${maxOl}</span>
+            <span class="panel-row-value" style="color:var(--accent-green)">${maxOl}</span>
           </div>
           <div class="panel-row">
             <span class="panel-row-label">Notes</span>
@@ -2338,7 +2558,7 @@ function showStackPanel(merged) {
           </div>
           <div class="panel-row">
             <span class="panel-row-label">Product</span>
-            <span class="panel-row-value" style="color:#888">${merged.ratios.reduce((a, b) => a * b, 1)}</span>
+            <span class="panel-row-value" style="color:var(--text-muted)">${merged.ratios.reduce((a, b) => a * b, 1)}</span>
           </div>
         </div>
       </div>
@@ -2349,7 +2569,7 @@ function showStackPanel(merged) {
     </div>
 
     <div class="panel-edo-col">
-      <div class="panel-edo-title">Nearby EDOs <span style="color:#606080;font-weight:400;font-size:10px">(${edoResults.length} within ${EDO_MAX_RMS_REL}% RMS)</span></div>
+      <div class="panel-edo-title">Nearby EDOs <span style="color:var(--text-faint);font-weight:400;font-size:10px">(${edoResults.length} within ${EDO_MAX_RMS_REL}% RMS)</span></div>
       <table class="panel-edo-table" id="edo-approx-table">
         <thead><tr>
           <th data-col="play"></th>
@@ -2433,22 +2653,23 @@ function drawPianoRoll(pitchCents) {
   const cRange = cMax - cMin;
   const cToX = c => padL + ((c - cMin) / cRange) * pw;
 
-  rx.fillStyle = '#0d1528';
+  const prc = getThemeColors();
+  rx.fillStyle = prc.bgInput;
   rx.fillRect(padL, padT, pw, ph);
-  rx.strokeStyle = '#2a3a5a';
+  rx.strokeStyle = prc.borderGrid;
   rx.lineWidth = rd;
   rx.strokeRect(padL, padT, pw, ph);
 
   // Dotted lines at every 100c
   rx.lineWidth = rd * 0.5;
   rx.font = `${7 * rd}px monospace`;
-  rx.fillStyle = '#555570';
+  rx.fillStyle = prc.textFaint;
   rx.textAlign = 'center';
   rx.textBaseline = 'top';
   for (let c = 0; c <= cMax; c += 100) {
     const x = cToX(c);
     if (x < padL || x > padL + pw) continue;
-    rx.strokeStyle = '#2a3a5a';
+    rx.strokeStyle = prc.borderGrid;
     rx.setLineDash([2 * rd, 3 * rd]);
     rx.beginPath();
     rx.moveTo(x, padT);
@@ -2460,7 +2681,7 @@ function drawPianoRoll(pitchCents) {
 
   // Chord note bars (vertical bars at each pitch)
   const barW = Math.max(3 * rd, pw * 0.008);
-  const colors = ['#e94560', '#6eb5ff', '#f5a623', '#50c878', '#bb86fc', '#ff6b9d', '#ffd700', '#00bcd4', '#ff7043'];
+  const colors = [prc.accent, prc.accentDark, prc.accentBright, prc.accentGreen, prc.accentPurple, prc.textDim, prc.text, prc.accentDark, prc.accentBright];
   rx.font = `${8 * rd}px monospace`;
   rx.textBaseline = 'top';
   rx.textAlign = 'center';
@@ -2472,8 +2693,8 @@ function drawPianoRoll(pitchCents) {
   }
 
   // Interval span lines between adjacent notes
-  const spanColors = ['#6eb5ff66', '#f5a62366', '#50c87866', '#bb86fc66', '#e9456066', '#ff6b9d66', '#ffd70066', '#00bcd466'];
-  const spanLabelColors = ['#6eb5ffaa', '#f5a623aa', '#50c878aa', '#bb86fcaa', '#e94560aa', '#ff6b9daa', '#ffd700aa', '#00bcd4aa'];
+  const spanColors = colors.map(c => hexWithAlpha(c, 0.4));
+  const spanLabelColors = colors.map(c => hexWithAlpha(c, 0.67));
   rx.lineWidth = rd;
   for (let i = 0; i < pitchCents.length - 1; i++) {
     const x0 = cToX(pitchCents[i]);
@@ -2554,24 +2775,24 @@ function showPanel(c) {
           <div class="panel-section-title">Intervals</div>
           <div class="panel-row">
             <span class="panel-row-label">Lower</span>
-            <span class="panel-row-value" style="color:#6eb5ff">${c.q/gcd(c.q,c.p)}/${c.p/gcd(c.q,c.p)}</span>
-            <span class="panel-row-value" style="color:#e94560">${c.a.toFixed(1)}¢</span>
+            <span class="panel-row-value" style="color:var(--accent-dark)">${c.q/gcd(c.q,c.p)}/${c.p/gcd(c.q,c.p)}</span>
+            <span class="panel-row-value" style="color:var(--accent)">${c.a.toFixed(1)}¢</span>
           </div>
           <div class="panel-row">
             <span class="panel-row-label">Upper</span>
-            <span class="panel-row-value" style="color:#f5a623">${c.r/gcd(c.r,c.q)}/${c.q/gcd(c.r,c.q)}</span>
-            <span class="panel-row-value" style="color:#e94560">${c.b.toFixed(1)}¢</span>
+            <span class="panel-row-value" style="color:var(--accent-bright)">${c.r/gcd(c.r,c.q)}/${c.q/gcd(c.r,c.q)}</span>
+            <span class="panel-row-value" style="color:var(--accent)">${c.b.toFixed(1)}¢</span>
           </div>
           <div class="panel-row">
             <span class="panel-row-label">Frame</span>
-            <span class="panel-row-value" style="color:#bb86fc">${c.r/gcd(c.r,c.p)}/${c.p/gcd(c.r,c.p)}</span>
-            <span class="panel-row-value" style="color:#f5a623">${c.F.toFixed(1)}¢</span>
+            <span class="panel-row-value" style="color:var(--accent-purple)">${c.r/gcd(c.r,c.p)}/${c.p/gcd(c.r,c.p)}</span>
+            <span class="panel-row-value" style="color:var(--accent-bright)">${c.F.toFixed(1)}¢</span>
           </div>
           ${invChords.length > 0 ? `
           <div class="panel-section-title" style="margin-top:4px">Inversions</div>
           ${invChords.map(ic => `<div class="panel-row">
-            <a href="#" class="inv-link" data-key="${ic.key}" style="color:#e94560;text-decoration:none;cursor:pointer">${ic.key}</a>
-            ${ic.displayName ? `<span class="panel-row-value" style="color:#888;font-size:12px">${ic.displayName}</span>` : ''}
+            <a href="#" class="inv-link" data-key="${ic.key}" style="color:var(--accent);text-decoration:none;cursor:pointer">${ic.key}</a>
+            ${ic.displayName ? `<span class="panel-row-value" style="color:var(--text-muted);font-size:12px">${ic.displayName}</span>` : ''}
           </div>`).join('')}` : ''}
         </div>
 
@@ -2579,11 +2800,11 @@ function showPanel(c) {
           <div class="panel-section-title">Properties</div>
           <div class="panel-row">
             <span class="panel-row-label">Contour</span>
-            <span class="panel-row-value" style="color:${CONTOUR_COLORS[c.contour]}">${c.contour}</span>
+            <span class="panel-row-value" style="color:${getContourColors()[c.contour]}">${c.contour}</span>
           </div>
           <div class="panel-row">
             <span class="panel-row-label">Hardness</span>
-            <span class="panel-row-value" style="color:#bb86fc">${c.H.toFixed(4)}</span>
+            <span class="panel-row-value" style="color:var(--accent-purple)">${c.H.toFixed(4)}</span>
           </div>
           <div class="panel-row">
             <span class="panel-row-label">Region</span>
@@ -2592,12 +2813,12 @@ function showPanel(c) {
           ${compChord ? `
           <div class="panel-section-title" style="margin-top:4px">Complement</div>
           <div class="panel-row">
-            <a href="#" class="inv-link" data-key="${compChord.key}" style="color:#e94560;text-decoration:none;cursor:pointer">${compChord.key}</a>
-            ${compChord.displayName ? `<span class="panel-row-value" style="color:#888;font-size:12px">${compChord.displayName}</span>` : ''}
+            <a href="#" class="inv-link" data-key="${compChord.key}" style="color:var(--accent);text-decoration:none;cursor:pointer">${compChord.key}</a>
+            ${compChord.displayName ? `<span class="panel-row-value" style="color:var(--text-muted);font-size:12px">${compChord.displayName}</span>` : ''}
           </div>` : `
           <div class="panel-section-title" style="margin-top:4px">Complement</div>
           <div class="panel-row">
-            <span class="panel-row-value" style="color:#888">${compKey}</span>
+            <span class="panel-row-value" style="color:var(--text-muted)">${compKey}</span>
           </div>`}
         </div>
       </div>
@@ -2608,7 +2829,7 @@ function showPanel(c) {
     </div>
 
     <div class="panel-edo-col">
-      <div class="panel-edo-title">Nearby EDOs <span style="color:#606080;font-weight:400;font-size:10px">(${edoResults.length} within ${EDO_MAX_RMS_REL}% RMS)</span></div>
+      <div class="panel-edo-title">Nearby EDOs <span style="color:var(--text-faint);font-weight:400;font-size:10px">(${edoResults.length} within ${EDO_MAX_RMS_REL}% RMS)</span></div>
       <table class="panel-edo-table" id="edo-approx-table">
         <thead><tr>
           <th data-col="play"></th>
@@ -2891,6 +3112,42 @@ function openFromHash() {
     idx = filteredChords.findIndex(c => c.key === hash);
   }
   if (idx >= 0) selectChord(idx);
+}
+
+// ═══════════════════════════════════════════
+// THEME PICKER WIRING
+// ═══════════════════════════════════════════
+
+{
+  const toggle = document.getElementById('theme-toggle');
+  const dropdown = document.getElementById('theme-dropdown');
+
+  toggle.addEventListener('click', (e) => {
+    e.stopPropagation();
+    dropdown.classList.toggle('open');
+  });
+
+  document.addEventListener('click', () => dropdown.classList.remove('open'));
+  dropdown.addEventListener('click', (e) => e.stopPropagation());
+
+  dropdown.querySelectorAll('.theme-option').forEach(btn => {
+    btn.addEventListener('click', () => {
+      setTheme(btn.dataset.theme);
+      dropdown.classList.remove('open');
+      if (document.getElementById('info-panel').classList.contains('open')) {
+        if (selectedChordIdx >= 0) showPanel(filteredChords[selectedChordIdx]);
+        else if (chordStack.length > 1) {
+          const merged = mergeStack(chordStack);
+          if (merged) showStackPanel(merged);
+        }
+      }
+    });
+  });
+
+  const saved = document.documentElement.getAttribute('data-theme') || 'midnight';
+  dropdown.querySelectorAll('.theme-option').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.theme === saved);
+  });
 }
 
 generate();
