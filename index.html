@@ -254,6 +254,7 @@ body {
   font-weight: 700;
   color: #e94560;
   font-family: monospace;
+  word-break: break-all;
 }
 .panel-name {
   font-size: 14px;
@@ -509,8 +510,8 @@ body {
   </div>
   <div class="filter-group">
     <label>Search:</label>
-    <input type="text" id="flt-search" placeholder="ratio or name" style="
-      width:100px;background:#0d1528;border:1px solid #2a3a5a;border-radius:3px;
+    <input type="text" id="flt-search" placeholder="16, :21, 5:" title="Comma-separated OR. 16=any, 16:=root, :16:=mid, :16=top" style="
+      width:120px;background:#0d1528;border:1px solid #2a3a5a;border-radius:3px;
       color:#e0e0e0;padding:2px 6px;font-size:11px;font-family:inherit;
     ">
   </div>
@@ -834,6 +835,8 @@ const REGION_BAND_COLORS = [
 
 function gcd(a, b) { while (b) { [a, b] = [b, a % b]; } return a; }
 function gcd3(a, b, c) { return gcd(gcd(a, b), c); }
+function gcdN(arr) { return arr.reduce((a, b) => gcd(a, b)); }
+function lcm(a, b) { return (a / gcd(a, b)) * b; }
 function ratioToCents(n, d) { return 1200 * Math.log2(n / d); }
 
 function oddLimit(n, d) {
@@ -867,6 +870,43 @@ function chordInversionKeys(p, q, r) {
     if (key !== `${p}:${q}:${r}`) keys.push(key);
   }
   return keys;
+}
+
+function mergeStack(stack) {
+  if (stack.length === 0) return null;
+  if (stack.length === 1) {
+    const c = stack[0];
+    return {
+      ratios: [c.p, c.q, c.r],
+      key: c.key,
+      pitchCents: [0, c.a, c.F],
+    };
+  }
+  let ratios = [stack[0].p, stack[0].q, stack[0].r];
+  for (let i = 1; i < stack.length; i++) {
+    const c = stack[i];
+    const top = ratios[ratios.length - 1];
+    const base = c.p;
+    const scaledQ = c.q * top;
+    const scaledR = c.r * top;
+    for (let j = 0; j < ratios.length; j++) ratios[j] *= base;
+    const topScaled = top * base;
+    if (!ratios.includes(topScaled)) ratios.push(topScaled);
+    if (!ratios.includes(scaledQ)) ratios.push(scaledQ);
+    if (!ratios.includes(scaledR)) ratios.push(scaledR);
+  }
+  ratios.sort((a, b) => a - b);
+  const unique = [...new Set(ratios)];
+  unique.sort((a, b) => a - b);
+  const g = gcdN(unique);
+  const reduced = unique.map(v => v / g);
+  const root = reduced[0];
+  const pitchCents = reduced.map(v => ratioToCents(v, root));
+  return {
+    ratios: reduced,
+    key: reduced.join(':'),
+    pitchCents,
+  };
 }
 
 function frameRegion(F) {
@@ -1223,6 +1263,9 @@ let selectedInversionKeys = new Set();
 let hoveredIdx = -1;
 let synthRootHz = 220;
 let synthWaveform = 'triangle';
+
+let chordStack = [];
+let stackedChordKeys = new Set();
 
 // ═══════════════════════════════════════════
 // VIEW / ZOOM / PAN
@@ -1734,8 +1777,9 @@ function drawPlot(shouldResize) {
     const c = filteredChords[i];
     const isSelected = c.key === selectedChordKey;
     const isInversion = selectedInversionKeys.has(c.key);
+    const isStacked = stackedChordKeys.has(c.key);
     let vis;
-    if (isSelected || isInversion || hasSearch) {
+    if (isSelected || isInversion || isStacked || hasSearch) {
       vis = 1;
     } else if (c.ol <= threshold) {
       vis = 1;
@@ -1751,7 +1795,7 @@ function drawPlot(shouldResize) {
     const dotWorldR = 0.85 * Math.max(0.6, 3 * c.invSqrtOl);
     const auraR = dotWorldR * dotScale * 6 * vis;
     if (x < pL - auraR || x > W - pR + auraR || y < pT - auraR || y > H - pB + auraR) continue;
-    visNodes.push({ i, c, x, y, vis, auraR, isSelected, isInversion });
+    visNodes.push({ i, c, x, y, vis, auraR, isSelected, isInversion, isStacked });
   }
 
   // Proximity declutter: shrink/fade nodes crowded by a more important neighbor
@@ -1759,7 +1803,7 @@ function drawPlot(shouldResize) {
   visNodes.sort((a, b) => a.c.ol - b.c.ol);
   for (let j = 0; j < visNodes.length; j++) {
     const n = visNodes[j];
-    if (n.isSelected || n.isInversion) continue;
+    if (n.isSelected || n.isInversion || n.isStacked) continue;
     for (let k = 0; k < j; k++) {
       const m = visNodes[k];
       if (m.c.ol >= n.c.ol) continue;
@@ -1808,9 +1852,8 @@ function drawPlot(shouldResize) {
     }
     ctx.globalAlpha = 1;
   } else {
-    // Only draw auras for selected/hovered/low-complexity nodes
     for (const n of visNodes) {
-      if (!n.isSelected && !n.isInversion && n.i !== hoveredIdx && n.c.ol > 15) continue;
+      if (!n.isSelected && !n.isInversion && !n.isStacked && n.i !== hoveredIdx && n.c.ol > 15) continue;
       const c = n.c;
       const alpha = n.vis * 0.9;
       const auraAlpha = alpha * Math.min(0.6, 5 / c.ol);
@@ -1844,7 +1887,7 @@ function drawPlot(shouldResize) {
     ctx.fill();
 
     // Edge ring — skip when there are tons of nodes and dot is small
-    if (!skipRings || dotR > 3 * dpr || isHovered || n.isSelected || n.isInversion) {
+    if (!skipRings || dotR > 3 * dpr || isHovered || n.isSelected || n.isInversion || n.isStacked) {
       const stroke = `hsla(${h},${s}%,${Math.min(95, l + 25)}%,${alpha * 0.5})`;
       if (stroke !== lastStroke) { ctx.strokeStyle = stroke; lastStroke = stroke; }
       ctx.lineWidth = ringWidth;
@@ -1857,6 +1900,13 @@ function drawPlot(shouldResize) {
       ctx.beginPath();
       ctx.arc(n.x, n.y, dotR + 4 * dpr, 0, TWO_PI);
       ctx.strokeStyle = '#e94560';
+      ctx.lineWidth = 1.5 * dpr;
+      ctx.stroke();
+      lastStroke = '';
+    } else if (n.isStacked) {
+      ctx.beginPath();
+      ctx.arc(n.x, n.y, dotR + 4 * dpr, 0, TWO_PI);
+      ctx.strokeStyle = '#50c878';
       ctx.lineWidth = 1.5 * dpr;
       ctx.stroke();
       lastStroke = '';
@@ -1878,7 +1928,7 @@ function drawPlot(shouldResize) {
       lastStroke = '';
     }
 
-    if (isHovered || n.isSelected || n.isInversion) {
+    if (isHovered || n.isSelected || n.isInversion || n.isStacked) {
       ctx.font = `bold ${11 * dpr}px monospace`;
       ctx.fillStyle = '#e0e0e0';
       ctx.textAlign = 'left';
@@ -2036,12 +2086,15 @@ canvas.addEventListener('mousemove', (e) => {
   if (idx >= 0) {
     const c = filteredChords[idx];
     canvas.style.cursor = 'pointer';
+    const inStack = stackedChordKeys.has(c.key);
+    const stackHint = chordStack.length > 0 ? (inStack ? '<div class="tt-detail" style="color:#50c878">in stack</div>' : '<div class="tt-detail" style="color:#50c878">shift+click to stack</div>') : '<div class="tt-detail" style="color:#555">shift+click to start stacking</div>';
     tooltip.innerHTML = `
       <div class="tt-ratio">${c.key}</div>${c.displayName ? `
       <div class="tt-name">${c.displayName}</div>` : ''}
       <div class="tt-detail">lower <span>${c.a.toFixed(1)}¢</span> · upper <span>${c.b.toFixed(1)}¢</span></div>
       <div class="tt-detail">frame <span style="color:#f5a623">${c.F.toFixed(1)}¢</span> · hardness <span style="color:#bb86fc">${c.H.toFixed(3)}</span></div>
       <div class="tt-detail">odd-limit <span style="color:#50c878">${c.ol}</span></div>
+      ${stackHint}
     `;
     tooltip.style.display = 'block';
   } else if (edoIdx >= 0) {
@@ -2094,7 +2147,13 @@ canvas.addEventListener('click', (e) => {
   const cy = e.clientY - rect.top;
   const idx = findNearestChord(cx, cy);
   if (idx >= 0) {
-    selectChord(idx);
+    if (e.shiftKey) {
+      stackChord(idx);
+    } else {
+      chordStack = [];
+      stackedChordKeys = new Set();
+      selectChord(idx);
+    }
   } else {
     const ei = findNearestEdoTriad(cx, cy);
     if (ei >= 0) {
@@ -2146,6 +2205,217 @@ function selectChord(idx) {
   drawPlot();
 }
 
+function stackChord(idx) {
+  const c = filteredChords[idx];
+  if (!c) return;
+  if (stackedChordKeys.has(c.key)) return;
+
+  if (chordStack.length === 0 && selectedChordIdx >= 0) {
+    const base = filteredChords[selectedChordIdx];
+    if (base && base.key !== c.key) {
+      chordStack.push(base);
+      stackedChordKeys.add(base.key);
+    }
+  }
+
+  chordStack.push(c);
+  stackedChordKeys.add(c.key);
+
+  if (chordStack.length === 1) {
+    selectedChordKey = c.key;
+    selectedInversionKeys = new Set();
+    selectedChordIdx = idx;
+    playChord(c, synthRootHz, synthWaveform, false);
+    showPanel(c);
+    drawPlot();
+    return;
+  }
+
+  selectedChordKey = null;
+  selectedInversionKeys = new Set();
+  selectedChordIdx = -1;
+
+  const merged = mergeStack(chordStack);
+  if (!merged) return;
+
+  const freqs = merged.ratios.map(r => synthRootHz * (r / merged.ratios[0]));
+  playFreqs(freqs, synthWaveform, false);
+
+  history.replaceState(null, '', '#' + merged.key);
+  showStackPanel(merged);
+  drawPlot();
+}
+
+function showStackPanel(merged) {
+  const panel = document.getElementById('info-panel');
+  const inner = document.getElementById('panel-inner');
+  panel.classList.add('open');
+
+  const edoResults = edoApproximate({ pitchCents: merged.pitchCents }, EDO_RANGE.min, EDO_RANGE.max, EDO_MAX_RMS_REL);
+
+  const intervals = [];
+  for (let i = 0; i < merged.ratios.length - 1; i++) {
+    const lo = merged.ratios[i];
+    const hi = merged.ratios[i + 1];
+    const g = gcd(hi, lo);
+    const cents = merged.pitchCents[i + 1] - merged.pitchCents[i];
+    const ol = oddLimit(hi, lo);
+    intervals.push({ lo, hi, ratio: `${hi / g}/${lo / g}`, cents, ol });
+  }
+
+  const totalSpan = merged.pitchCents[merged.pitchCents.length - 1];
+  const maxOl = Math.max(...intervals.map(iv => iv.ol));
+
+  const sourceKeys = chordStack.map(c => c.key).join(' + ');
+
+  function fmtErr(v) { return (v >= 0 ? '+' : '') + v.toFixed(1); }
+
+  const edoRows = edoResults.map((e, ei) => {
+    const stepsStr = e.steps.join('–');
+    const centsStr = e.approxCents.map(c => c.toFixed(1)).join(', ');
+    const errsStr = e.errors.map(fmtErr).join(', ');
+    return `<tr data-edo="${e.edo}" data-rms-rel="${e.rmsRel}">
+      <td><button class="edo-play-btn" data-ei="${ei}" title="Play in ${e.edo}edo">▶</button></td>
+      <td>${e.edo}</td>
+      <td>${stepsStr}</td>
+      <td>${centsStr}</td>
+      <td>${errsStr}</td>
+      <td>${e.rmsCents.toFixed(2)}</td>
+      <td>${e.rmsRel.toFixed(1)}</td>
+    </tr>`;
+  }).join('');
+
+  const intervalRows = intervals.map((iv, i) => {
+    const colors = ['#6eb5ff', '#f5a623', '#50c878', '#bb86fc', '#e94560', '#ff6b9d', '#ffd700'];
+    const color = colors[i % colors.length];
+    return `<div class="panel-row">
+      <span class="panel-row-label" style="color:${color}">Step ${i + 1}</span>
+      <span class="panel-row-value" style="color:${color}">${iv.ratio}</span>
+      <span class="panel-row-value" style="color:#e94560">${iv.cents.toFixed(1)}¢</span>
+    </div>`;
+  }).join('');
+
+  inner.innerHTML = `
+    <div class="panel-header-col">
+      <div class="panel-ratio">${merged.key}</div>
+      <div class="panel-name" style="color:#50c878;font-size:11px">${sourceKeys}</div>
+      <div class="panel-audio">
+        <label>Hz</label>
+        <input type="number" id="p-root" value="${synthRootHz}" min="20" max="2000">
+        <select id="p-wave">
+          <option value="triangle"${synthWaveform === 'triangle' ? ' selected' : ''}>tri</option>
+          <option value="sine"${synthWaveform === 'sine' ? ' selected' : ''}>sin</option>
+          <option value="sawtooth"${synthWaveform === 'sawtooth' ? ' selected' : ''}>saw</option>
+          <option value="square"${synthWaveform === 'square' ? ' selected' : ''}>sq</option>
+        </select>
+      </div>
+      <div class="panel-audio">
+        <button class="panel-play-btn" id="p-play">▶ Play</button>
+        <button class="panel-play-btn" id="p-arp">▶ Arp</button>
+        <button class="panel-stop-btn" id="p-stop">■</button>
+      </div>
+    </div>
+
+    <div class="panel-desc-col">
+      <div class="panel-desc-row">
+        <div class="panel-section">
+          <div class="panel-section-title">Intervals (${merged.ratios.length} notes)</div>
+          ${intervalRows}
+          <div class="panel-row" style="margin-top:4px">
+            <span class="panel-row-label">Span</span>
+            <span class="panel-row-value" style="color:#bb86fc">${totalSpan.toFixed(1)}¢</span>
+          </div>
+        </div>
+        <div class="panel-section">
+          <div class="panel-section-title">Properties</div>
+          <div class="panel-row">
+            <span class="panel-row-label">Odd limit</span>
+            <span class="panel-row-value" style="color:#50c878">${maxOl}</span>
+          </div>
+          <div class="panel-row">
+            <span class="panel-row-label">Notes</span>
+            <span class="panel-row-value">${merged.ratios.length}</span>
+          </div>
+          <div class="panel-row">
+            <span class="panel-row-label">Product</span>
+            <span class="panel-row-value" style="color:#888">${merged.ratios.reduce((a, b) => a * b, 1)}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel-roll-col">
+      <canvas id="panel-roll-canvas" width="1" height="1"></canvas>
+    </div>
+
+    <div class="panel-edo-col">
+      <div class="panel-edo-title">Nearby EDOs <span style="color:#606080;font-weight:400;font-size:10px">(${edoResults.length} within ${EDO_MAX_RMS_REL}% RMS)</span></div>
+      <table class="panel-edo-table" id="edo-approx-table">
+        <thead><tr>
+          <th data-col="play"></th>
+          <th data-col="edo" data-sort="number" class="sort-asc">EDO</th>
+          <th data-col="steps">Steps</th>
+          <th data-col="cents">Cents</th>
+          <th data-col="errors">Errors ¢</th>
+          <th data-col="rmsCents" data-sort="number">RMS ¢</th>
+          <th data-col="rmsRel" data-sort="number">RMS %</th>
+        </tr></thead>
+        <tbody>${edoRows}</tbody>
+      </table>
+    </div>
+  `;
+
+  requestAnimationFrame(() => drawPianoRoll(merged.pitchCents));
+
+  const getAudio = () => ({
+    rootHz: +document.getElementById('p-root').value || 220,
+    waveform: document.getElementById('p-wave').value,
+  });
+
+  document.getElementById('p-root').addEventListener('change', e => { synthRootHz = +e.target.value || 220; });
+  document.getElementById('p-wave').addEventListener('change', e => { synthWaveform = e.target.value; });
+
+  const playMerged = (arp) => {
+    const a = getAudio();
+    const freqs = merged.ratios.map(r => a.rootHz * (r / merged.ratios[0]));
+    playFreqs(freqs, a.waveform, arp);
+  };
+
+  document.getElementById('p-play').onclick = () => playMerged(false);
+  document.getElementById('p-arp').onclick = () => playMerged(true);
+  document.getElementById('p-stop').onclick = stopAll;
+
+  inner.querySelectorAll('.edo-play-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const a = getAudio();
+      playEdoApprox(edoResults[+btn.dataset.ei], a.rootHz, a.waveform);
+    });
+  });
+
+  const edoTable = document.getElementById('edo-approx-table');
+  if (edoTable) {
+    edoTable.querySelectorAll('th[data-sort]').forEach(th => {
+      th.addEventListener('click', () => {
+        const tbody = edoTable.querySelector('tbody');
+        const rows = Array.from(tbody.querySelectorAll('tr'));
+        const colIdx = Array.from(th.parentNode.children).indexOf(th);
+        const wasAsc = th.classList.contains('sort-asc');
+        const dir = wasAsc ? -1 : 1;
+        edoTable.querySelectorAll('th').forEach(h => h.classList.remove('sort-asc', 'sort-desc'));
+        th.classList.add(dir === 1 ? 'sort-asc' : 'sort-desc');
+        rows.sort((a, b) => {
+          const av = parseFloat(a.children[colIdx].textContent);
+          const bv = parseFloat(b.children[colIdx].textContent);
+          return (av - bv) * dir;
+        });
+        rows.forEach(r => tbody.appendChild(r));
+      });
+    });
+  }
+
+  requestAnimationFrame(drawPlot);
+}
+
 function drawPianoRoll(pitchCents) {
   const rc = document.getElementById('panel-roll-canvas');
   if (!rc) return;
@@ -2159,7 +2429,7 @@ function drawPianoRoll(pitchCents) {
   const pw = rc.width - padL - padR;
   const ph = rc.height - padT - padB;
 
-  const cMin = -20, cMax = 1200;
+  const cMin = -20, cMax = Math.max(1200, Math.max(...pitchCents) + 20);
   const cRange = cMax - cMin;
   const cToX = c => padL + ((c - cMin) / cRange) * pw;
 
@@ -2175,7 +2445,7 @@ function drawPianoRoll(pitchCents) {
   rx.fillStyle = '#555570';
   rx.textAlign = 'center';
   rx.textBaseline = 'top';
-  for (let c = 0; c <= 1200; c += 100) {
+  for (let c = 0; c <= cMax; c += 100) {
     const x = cToX(c);
     if (x < padL || x > padL + pw) continue;
     rx.strokeStyle = '#2a3a5a';
@@ -2190,30 +2460,32 @@ function drawPianoRoll(pitchCents) {
 
   // Chord note bars (vertical bars at each pitch)
   const barW = Math.max(3 * rd, pw * 0.008);
-  const colors = ['#e94560', '#6eb5ff', '#f5a623'];
+  const colors = ['#e94560', '#6eb5ff', '#f5a623', '#50c878', '#bb86fc', '#ff6b9d', '#ffd700', '#00bcd4', '#ff7043'];
   rx.font = `${8 * rd}px monospace`;
   rx.textBaseline = 'top';
   rx.textAlign = 'center';
   for (let i = 0; i < pitchCents.length; i++) {
     const x = cToX(pitchCents[i]) - barW / 2;
-    rx.fillStyle = colors[i];
+    rx.fillStyle = colors[i % colors.length];
     rx.fillRect(x, padT + 1 * rd, barW, ph - 2 * rd);
     rx.fillText(Math.round(pitchCents[i]), x + barW / 2, padT + ph + 2 * rd);
   }
 
   // Interval span lines between adjacent notes
+  const spanColors = ['#6eb5ff66', '#f5a62366', '#50c87866', '#bb86fc66', '#e9456066', '#ff6b9d66', '#ffd70066', '#00bcd466'];
+  const spanLabelColors = ['#6eb5ffaa', '#f5a623aa', '#50c878aa', '#bb86fcaa', '#e94560aa', '#ff6b9daa', '#ffd700aa', '#00bcd4aa'];
   rx.lineWidth = rd;
   for (let i = 0; i < pitchCents.length - 1; i++) {
     const x0 = cToX(pitchCents[i]);
     const x1 = cToX(pitchCents[i + 1]);
     const midY = padT + ph * 0.5;
-    rx.strokeStyle = i === 0 ? '#6eb5ff66' : '#f5a62366';
+    rx.strokeStyle = spanColors[i % spanColors.length];
     rx.beginPath();
     rx.moveTo(x0, midY);
     rx.lineTo(x1, midY);
     rx.stroke();
     const diff = pitchCents[i + 1] - pitchCents[i];
-    rx.fillStyle = i === 0 ? '#6eb5ffaa' : '#f5a623aa';
+    rx.fillStyle = spanLabelColors[i % spanLabelColors.length];
     rx.font = `${7 * rd}px monospace`;
     rx.textAlign = 'center';
     rx.textBaseline = 'middle';
@@ -2411,6 +2683,8 @@ function closePanel() {
   selectedChordKey = null;
   selectedInversionKeys = new Set();
   selectedChordIdx = -1;
+  chordStack = [];
+  stackedChordKeys = new Set();
   history.replaceState(null, '', location.pathname + location.search);
   stopAll();
   drawPlot();
@@ -2461,27 +2735,66 @@ function parseStepRatios(str) {
     const n = +m[1], d = +m[2];
     if (d > 0 && n > d) ratios.push([n, d]);
   }
-  return ratios.length ? ratios : null;
+  if (ratios.length) return ratios;
+  return str.trim().length ? [] : null;
+}
+
+function parseSearchTerms(raw) {
+  if (!raw.trim()) return null;
+  const terms = [];
+  for (const tok of raw.split(',')) {
+    const t = tok.trim().toLowerCase();
+    if (!t) continue;
+    const mStart = t.match(/^(\d+):$/);
+    if (mStart) { terms.push({ num: +mStart[1], pos: 1 }); continue; }
+    const mMid = t.match(/^:(\d+):$/);
+    if (mMid) { terms.push({ num: +mMid[1], pos: 2 }); continue; }
+    const mEnd = t.match(/^:(\d+)$/);
+    if (mEnd) { terms.push({ num: +mEnd[1], pos: 4 }); continue; }
+    if (/^\d+$/.test(t)) { terms.push({ num: +t, pos: 0 }); continue; }
+    terms.push({ text: t, pos: 0 });
+  }
+  return terms.length ? terms : null;
 }
 
 function applyFilters() {
   const contour = document.getElementById('flt-contour').value;
   const maxR = +document.getElementById('flt-max-r').value || 128;
   const maxHard = +document.getElementById('flt-max-hard').value || 99;
-  const search = document.getElementById('flt-search').value.trim().toLowerCase();
+  const searchTerms = parseSearchTerms(document.getElementById('flt-search').value);
   const stepRatios = parseStepRatios(document.getElementById('flt-steps').value);
 
   document.getElementById('flt-max-r-val').textContent = maxR;
 
+  const pinnedKeys = new Set();
+  if (selectedChordKey) pinnedKeys.add(selectedChordKey);
+  for (const k of stackedChordKeys) pinnedKeys.add(k);
+  for (const k of selectedInversionKeys) pinnedKeys.add(k);
+
   filteredChords = allChords.filter(c => {
+    if (pinnedKeys.has(c.key)) return true;
     if (contour && c.contour !== contour) return false;
     if (c.r > maxR) return false;
     if (c.H > maxHard) return false;
-    if (search) {
-      if (!c.key.includes(search) &&
-          !(c.displayName && c.displayName.toLowerCase().includes(search)) &&
-          !(c.name && c.name.toLowerCase().includes(search)) &&
-          !c.genericName.toLowerCase().includes(search)) return false;
+    if (searchTerms) {
+      let anyMatch = false;
+      for (const term of searchTerms) {
+        if (term.text !== undefined) {
+          if (c.key.includes(term.text) ||
+              (c.displayName && c.displayName.toLowerCase().includes(term.text)) ||
+              (c.name && c.name.toLowerCase().includes(term.text)) ||
+              c.genericName.toLowerCase().includes(term.text)) {
+            anyMatch = true;
+          }
+          continue;
+        }
+        const n = term.num;
+        if (term.pos === 1 && c.p === n) anyMatch = true;
+        else if (term.pos === 2 && c.q === n) anyMatch = true;
+        else if (term.pos === 4 && c.r === n) anyMatch = true;
+        else if (term.pos === 0 && (c.p === n || c.q === n || c.r === n)) anyMatch = true;
+      }
+      if (!anyMatch) return false;
     }
     if (stepRatios) {
       const lowerOk = stepRatios.some(([n, d]) => c.q * d === c.p * n);
