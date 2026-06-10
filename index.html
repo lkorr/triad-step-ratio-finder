@@ -687,7 +687,7 @@ body {
     ">
     <button class="filter-btn" id="btn-tertian" title="Fill with tertian third intervals">tertian triads</button>
   </div>
-  <button class="filter-btn" id="btn-reset-view" title="Reset zoom">Reset view</button>
+  <button class="filter-btn" id="btn-reset-view" title="Reset zoom (R or 0)">Reset view</button>
   <span id="chord-count"></span>
 </div>
 
@@ -1579,17 +1579,10 @@ function canvasToSigned(cy) {
   return viewSignedMax - (cy * dpr - PADDING.top * dpr) / (H - (PADDING.top + PADDING.bottom) * dpr) * (viewSignedMax - viewSignedMin);
 }
 
-// ── Zoom (scroll) ──
-canvas.addEventListener('wheel', (e) => {
-  e.preventDefault();
-  const rect = canvas.getBoundingClientRect();
-  const cx = e.clientX - rect.left;
-  const cy = e.clientY - rect.top;
-
+// ── Zoom / pan helpers ──
+function zoomAt(cx, cy, zoomFactor) {
   const focusF = canvasToFrame(cx);
   const focusS = canvasToSigned(cy);
-
-  const zoomFactor = e.deltaY > 0 ? 1.15 : 1 / 1.15;
 
   const fRange = viewFrameMax - viewFrameMin;
   const sRange = viewSignedMax - viewSignedMin;
@@ -1607,7 +1600,84 @@ canvas.addEventListener('wheel', (e) => {
   viewSignedMax = focusS + (1 - ratioS) * newSRange;
 
   scheduleRedraw(false);
+}
+
+function panByPixels(dxPx, dyPx) {
+  const rect = canvas.getBoundingClientRect();
+  const plotW = rect.width - PADDING.left - PADDING.right;
+  const plotH = rect.height - PADDING.top - PADDING.bottom;
+
+  const dF = dxPx / plotW * (viewFrameMax - viewFrameMin);
+  const dS = -dyPx / plotH * (viewSignedMax - viewSignedMin);
+
+  viewFrameMin += dF;
+  viewFrameMax += dF;
+  viewSignedMin += dS;
+  viewSignedMax += dS;
+
+  scheduleRedraw(false);
+}
+
+// ── Wheel: trackpad two-finger scroll pans, pinch zooms; mouse wheel zooms ──
+// Trackpads emit pixel-mode events with horizontal motion, fractional deltas,
+// or small magnitudes; the flag is sticky so fast flicks mid-gesture don't
+// get misread as a mouse wheel.
+let _wheelIsTrackpad = false;
+let _lastWheelT = 0;
+function wheelLooksLikeTrackpad(e) {
+  const now = performance.now();
+  const dt = now - _lastWheelT;
+  _lastWheelT = now;
+  if (e.deltaMode !== 0) { _wheelIsTrackpad = false; return false; }
+  const fractional = e.deltaY !== Math.round(e.deltaY) || e.deltaX !== Math.round(e.deltaX);
+  if (e.deltaX !== 0 || fractional || Math.abs(e.deltaY) < 40) {
+    _wheelIsTrackpad = true;
+  } else if (dt > 400) {
+    _wheelIsTrackpad = false;
+  }
+  return _wheelIsTrackpad;
+}
+
+canvas.addEventListener('wheel', (e) => {
+  e.preventDefault();
+  const rect = canvas.getBoundingClientRect();
+  const cx = e.clientX - rect.left;
+  const cy = e.clientY - rect.top;
+
+  // Trackpad pinch arrives as ctrl+wheel (Chrome/Firefox/Edge);
+  // also covers deliberate ctrl/cmd+scroll on a mouse
+  if (e.ctrlKey || e.metaKey) {
+    const factor = Math.min(1.5, Math.max(1 / 1.5, Math.exp(e.deltaY * 0.012)));
+    zoomAt(cx, cy, factor);
+    return;
+  }
+
+  if (wheelLooksLikeTrackpad(e)) {
+    let dx = e.deltaX, dy = e.deltaY;
+    if (e.shiftKey && dx === 0) { dx = dy; dy = 0; }
+    panByPixels(dx, dy);
+    return;
+  }
+
+  zoomAt(cx, cy, e.deltaY > 0 ? 1.15 : 1 / 1.15);
 }, { passive: false });
+
+// ── Safari trackpad pinch (no ctrl+wheel there; uses GestureEvent) ──
+if (typeof window.GestureEvent !== 'undefined') {
+  let _lastGestureScale = 1;
+  canvas.addEventListener('gesturestart', (e) => {
+    e.preventDefault();
+    _lastGestureScale = e.scale;
+  });
+  canvas.addEventListener('gesturechange', (e) => {
+    e.preventDefault();
+    const rect = canvas.getBoundingClientRect();
+    const factor = _lastGestureScale / Math.max(e.scale, 0.01);
+    _lastGestureScale = e.scale;
+    zoomAt(e.clientX - rect.left, e.clientY - rect.top, factor);
+  });
+  canvas.addEventListener('gestureend', (e) => e.preventDefault());
+}
 
 // ── Pan (drag) & Y-axis zoom drag ──
 let isDragging = false;
@@ -1786,13 +1856,14 @@ window.addEventListener('mouseup', () => {
 });
 
 // ── Reset view ──
-document.getElementById('btn-reset-view').addEventListener('click', () => {
+function resetView() {
   viewFrameMin = homeFrameMin;
   viewFrameMax = homeFrameMax;
   viewSignedMin = homeSignedMin;
   viewSignedMax = homeSignedMax;
   drawPlot(false);
-});
+}
+document.getElementById('btn-reset-view').addEventListener('click', resetView);
 
 // ═══════════════════════════════════════════
 // DRAW
@@ -2940,7 +3011,11 @@ document.getElementById('panel-close').addEventListener('click', closePanel);
 document.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') {
     if (document.getElementById('info-panel').classList.contains('open')) closePanel();
+    return;
   }
+  const t = e.target;
+  if (t && (t.tagName === 'INPUT' || t.tagName === 'SELECT' || t.tagName === 'TEXTAREA')) return;
+  if (e.key === '0' || e.key === 'r' || e.key === 'R') resetView();
 });
 
 // ═══════════════════════════════════════════
