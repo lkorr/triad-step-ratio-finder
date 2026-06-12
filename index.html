@@ -1618,7 +1618,7 @@ function panByPixels(dxPx, dyPx) {
   scheduleRedraw(false);
 }
 
-// ── Wheel: trackpad two-finger scroll pans, pinch zooms; mouse wheel zooms ──
+// ── Wheel: scroll zooms (mouse + trackpad); shift/horizontal scroll pans; pinch zooms ──
 // Trackpads emit pixel-mode events with horizontal motion, fractional deltas,
 // or small magnitudes; the flag is sticky so fast flicks mid-gesture don't
 // get misread as a mouse wheel.
@@ -1653,9 +1653,15 @@ canvas.addEventListener('wheel', (e) => {
   }
 
   if (wheelLooksLikeTrackpad(e)) {
-    let dx = e.deltaX, dy = e.deltaY;
-    if (e.shiftKey && dx === 0) { dx = dy; dy = 0; }
-    panByPixels(dx, dy);
+    // Shift+scroll (or horizontal two-finger motion) pans; plain scroll zooms
+    if (e.shiftKey || (e.deltaX !== 0 && Math.abs(e.deltaX) > Math.abs(e.deltaY))) {
+      let dx = e.deltaX, dy = e.deltaY;
+      if (e.shiftKey && dx === 0) { dx = dy; dy = 0; }
+      panByPixels(dx, dy);
+      return;
+    }
+    const factor = Math.min(1.5, Math.max(1 / 1.5, Math.exp(e.deltaY * 0.012)));
+    zoomAt(cx, cy, factor);
     return;
   }
 
